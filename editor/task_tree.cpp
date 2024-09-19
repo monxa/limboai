@@ -17,6 +17,7 @@
 #include "../bt/tasks/composites/bt_probability_selector.h"
 #include "../util/limbo_compat.h"
 #include "../util/limbo_utility.h"
+#include "tree_search.h"
 
 #ifdef LIMBOAI_MODULE
 #include "core/object/script_language.h"
@@ -124,6 +125,7 @@ void TaskTree::_update_tree() {
 	for (const Ref<BTTask> &task : selection) {
 		add_selection(task);
 	}
+	tree_search.apply_search(tree);
 }
 
 TreeItem *TaskTree::_find_item(const Ref<BTTask> &p_task) const {
@@ -565,9 +567,16 @@ void TaskTree::_bind_methods() {
 TaskTree::TaskTree() {
 	editable = true;
 	updating_tree = false;
-
+	
+	// for Tree + TreeSearch, we want a VBoxContainer. For now, rather than changing this classes type, let's do nesting:
+	// TaskTree -> VBoxContainer -> [Tree, TreeSearchPanel]
+	VBoxContainer * vbox_container = memnew(VBoxContainer);
+	add_child(vbox_container);
+	vbox_container->set_anchors_preset(PRESET_FULL_RECT);
+	
 	tree = memnew(Tree);
-	add_child(tree);
+	tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	vbox_container->add_child(tree);
 	tree->set_columns(2);
 	tree->set_column_expand(0, true);
 	tree->set_column_expand(1, false);
@@ -578,6 +587,7 @@ TaskTree::TaskTree() {
 	tree->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 
 	tree->set_drag_forwarding(callable_mp(this, &TaskTree::_get_drag_data_fw), callable_mp(this, &TaskTree::_can_drop_data_fw), callable_mp(this, &TaskTree::_drop_data_fw));
+	vbox_container->add_child(tree_search.search_panel);
 }
 
 TaskTree::~TaskTree() {

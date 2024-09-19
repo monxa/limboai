@@ -9,9 +9,13 @@
  * =============================================================================
  */
 
+#ifndef TASK_TREE_H
+#define TASK_TREE_H
+
 #ifdef TOOLS_ENABLED
 
 #include "../bt/behavior_tree.h"
+#include "tree_search.h"
 
 #ifdef LIMBOAI_MODULE
 #include "scene/gui/control.h"
@@ -42,6 +46,7 @@ private:
 	bool editable;
 	bool updating_tree;
 	HashMap<RECT_CACHE_KEY, Rect2> probability_rect_cache;
+	TreeSearch tree_search;
 
 	struct ThemeCache {
 		Ref<Font> comment_font;
@@ -109,3 +114,4 @@ public:
 };
 
 #endif // ! TOOLS_ENABLED
+#endif // ! TASK_TREE_H

@@ -20,6 +20,7 @@
 #include "owner_picker.h"
 #include "task_palette.h"
 #include "task_tree.h"
+#include "tree_search.h"
 
 #ifdef LIMBOAI_MODULE
 #include "core/object/class_db.h"
@@ -100,6 +101,7 @@ private:
 		MISC_LAYOUT_WIDESCREEN_OPTIMIZED,
 		MISC_PROJECT_SETTINGS,
 		MISC_CREATE_SCRIPT_TEMPLATE,
+		MISC_SEARCH_TREE
 	};
 
 	enum TabMenu {
@@ -134,6 +136,7 @@ private:
 		Ref<Texture2D> cut_icon;
 		Ref<Texture2D> copy_icon;
 		Ref<Texture2D> paste_icon;
+		Ref<Texture2D> search_icon;
 	} theme_cache;
 
 	EditorPlugin *plugin;

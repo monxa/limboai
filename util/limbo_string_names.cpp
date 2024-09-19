@@ -46,6 +46,7 @@ LimboStringNames::LimboStringNames() {
 	button_up = SN("button_up");
 	call_deferred = SN("call_deferred");
 	changed = SN("changed");
+	Close = SN("Close");
 	dark_color_2 = SN("dark_color_2");
 	Debug = SN("Debug");
 	disabled_font_color = SN("disabled_font_color");

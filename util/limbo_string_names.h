@@ -62,6 +62,7 @@ public:
 	StringName button_up;
 	StringName call_deferred;
 	StringName changed;
+	StringName Close;
 	StringName dark_color_2;
 	StringName Debug;
 	StringName disabled_font_color;
