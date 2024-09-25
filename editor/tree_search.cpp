@@ -159,7 +159,7 @@ void TreeSearch::_filter_tree(const String &p_search_mask) {
 		while (first_counting_ancestor && !number_matches.has(first_counting_ancestor)) {
 			first_counting_ancestor = first_counting_ancestor->get_parent();
 		}
-		if (!first_counting_ancestor || first_counting_ancestor == tree_reference->get_root() || !_vector_has_bsearch(matching_entries, first_counting_ancestor)) {
+		if (!first_counting_ancestor || !_vector_has_bsearch(matching_entries, first_counting_ancestor)) {
 			cur_item->set_visible(false);
 		}
 	}
