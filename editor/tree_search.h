@@ -83,13 +83,13 @@ private:
 		}
 	};
 
-	Tree * tree_reference;
+	Tree *tree_reference;
 
 	Vector<TreeItem *> ordered_tree_items;
 	Vector<TreeItem *> matching_entries;
 	HashMap<TreeItem *, int> number_matches;
 	HashMap<TreeItem *, Callable> callable_cache;
-	
+
 	void _filter_tree(TreeItem *tree_item, const String &search_mask);
 	void _highlight_tree(const String &p_search_mask);
 	void _draw_highlight_item(TreeItem *tree_item, Rect2 rect, String search_mask, Callable parent_draw_method);
@@ -99,13 +99,12 @@ private:
 	Vector<TreeItem *> _find_matching_entries(TreeItem *tree_item, const String &search_mask, Vector<TreeItem *> &buffer);
 	StringSearchIndices _substring_bounds(const String &searchable, const String &search_mask) const;
 
-	void _select_item(TreeItem * item);
+	void _select_item(TreeItem *item);
 	void _select_first_match();
 	void _select_next_match();
 
-
 protected:
-	static void _bind_methods(){}
+	static void _bind_methods() {}
 
 public:
 	// we will add everything from TaskTree.h

@@ -23,17 +23,17 @@
 #include "core/object/script_language.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
-#include "scene/gui/texture_rect.h"
 #include "scene/gui/label.h"
+#include "scene/gui/texture_rect.h"
 #endif // LIMBOAI_MODULE
 
 #ifdef LIMBOAI_GDEXTENSION
 #include <godot_cpp/classes/editor_interface.hpp>
-#include <godot_cpp/classes/script.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
-#include <godot_cpp/classes/v_box_container.hpp>
-#include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/script.hpp>
+#include <godot_cpp/classes/texture_rect.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
 using namespace godot;
 #endif // LIMBOAI_GDEXTENSION
 
@@ -437,7 +437,7 @@ void TaskTree::_normalize_drop(TreeItem *item, int type, int &to_pos, Ref<BTTask
 			to_pos = to_task->get_index();
 			{
 				Vector<Ref<BTTask>> selected = get_selected_tasks();
-				if (to_task == selected[selected.size()-1]) {
+				if (to_task == selected[selected.size() - 1]) {
 					to_pos += 1;
 				}
 			}
@@ -574,13 +574,13 @@ void TaskTree::tree_search_show_and_focus() {
 TaskTree::TaskTree() {
 	editable = true;
 	updating_tree = false;
-	
+
 	// for Tree + TreeSearch, we want a VBoxContainer. For now, rather than changing this classes type, let's do nesting:
 	// TaskTree -> VBoxContainer -> [Tree, TreeSearchPanel]
-	VBoxContainer * vbox_container = memnew(VBoxContainer);
+	VBoxContainer *vbox_container = memnew(VBoxContainer);
 	add_child(vbox_container);
 	vbox_container->set_anchors_preset(PRESET_FULL_RECT);
-	
+
 	tree = memnew(Tree);
 	tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox_container->add_child(tree);
@@ -594,7 +594,7 @@ TaskTree::TaskTree() {
 	tree->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 
 	tree->set_drag_forwarding(callable_mp(this, &TaskTree::_get_drag_data_fw), callable_mp(this, &TaskTree::_can_drop_data_fw), callable_mp(this, &TaskTree::_drop_data_fw));
-	
+
 	tree_search = memnew(TreeSearch);
 	vbox_container->add_child(tree_search->search_panel);
 }

@@ -22,19 +22,19 @@
 #include "core/math/math_funcs.h"
 #include "editor/editor_interface.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/resources/font.h"
 #include "scene/gui/separator.h"
-#include "scene/resources/style_box_flat.h"
 #include "scene/main/viewport.h"
+#include "scene/resources/font.h"
+#include "scene/resources/style_box_flat.h"
 #endif // LIMBOAI_MODULE
 
 #ifdef LIMBOAI_GDEXTENSION
-#include <godot_cpp/core/math.hpp>
 #include <godot_cpp/classes/editor_interface.hpp> // for edge scale
 #include <godot_cpp/classes/font.hpp>
 #include <godot_cpp/classes/h_separator.hpp>
 #include <godot_cpp/classes/style_box_flat.hpp>
 #include <godot_cpp/classes/viewport.hpp>
+#include <godot_cpp/core/math.hpp>
 #endif // LIMBOAI_GDEXTENSION
 
 #define UPPER_BOUND (1 << 15) // for substring search.
@@ -141,8 +141,7 @@ void TreeSearchPanel::show_and_focus() {
 /* ------- TreeSearch ------- */
 
 void TreeSearch::_filter_tree(TreeItem *p_tree_item, const String &p_search_mask) {
-	for (int i = 0; i < ordered_tree_items.size(); i++){
-		
+	for (int i = 0; i < ordered_tree_items.size(); i++) {
 	}
 	PRINT_LINE("filter tree not yet implemented!", p_search_mask);
 }
@@ -153,8 +152,9 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 		TreeItem *entry = ordered_tree_items[i];
 
 		int num_m = number_matches.has(entry) ? number_matches.get(entry) : 0;
-		if (num_m == 0){
-			continue;;
+		if (num_m == 0) {
+			continue;
+			;
 		}
 
 		// make sure to also call any draw method already defined.
@@ -164,7 +164,7 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 		}
 
 		Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(p_search_mask, parent_draw_method);
-	
+
 		// -- this is necessary because of the modularity of this implementation
 		// cache render properties of entry
 		String cached_text = entry->get_text(0);
@@ -189,10 +189,9 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Strin
 		return;
 	// call any parent draw methods such as for probability FIRST.
 	p_parent_draw_method.call(p_tree_item, p_rect);
-	
+
 	// first part: outline
 	if (matching_entries.has(p_tree_item)) {
-
 		// font info
 		Ref<Font> font = p_tree_item->get_custom_font(0);
 		if (font.is_null()) {
@@ -207,7 +206,7 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Strin
 		// substring size
 		String string_full = p_tree_item->get_text(0);
 		StringSearchIndices substring_idx = _substring_bounds(string_full, p_search_mask);
-		
+
 		String substring_match = string_full.substr(substring_idx.lower, substring_idx.upper - substring_idx.lower);
 		Vector2 substring_match_size = font->get_string_size(substring_match, HORIZONTAL_ALIGNMENT_LEFT, -1.f, font_size);
 
@@ -409,16 +408,16 @@ void TreeSearch::_select_next_match() {
 	_select_first_match(); // wrap around.
 }
 
-void TreeSearch::on_item_edited(TreeItem * item) {
-	if (item->get_cell_mode(0) != TreeItem::CELL_MODE_CUSTOM){
+void TreeSearch::on_item_edited(TreeItem *item) {
+	if (item->get_cell_mode(0) != TreeItem::CELL_MODE_CUSTOM) {
 		return;
 	}
 
-	if (!callable_cache.has(item) || item->get_custom_draw_callback(0) == callable_cache.get(item)){
+	if (!callable_cache.has(item) || item->get_custom_draw_callback(0) == callable_cache.get(item)) {
 		return;
 	}
 
-	item->set_custom_draw_callback(0,callable_cache.get(item));
+	item->set_custom_draw_callback(0, callable_cache.get(item));
 }
 
 // Call this as a post-processing step for the already constructed tree.
@@ -439,7 +438,6 @@ void TreeSearch::update_search(Tree *p_tree) {
 	_update_ordered_tree_items(p_tree->get_root());
 	_update_matching_entries(search_mask);
 	_update_number_matches();
-
 
 	if (search_mode == TreeSearchMode::HIGHLIGHT) {
 		_highlight_tree(search_mask);
