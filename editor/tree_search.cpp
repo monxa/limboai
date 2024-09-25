@@ -43,14 +43,12 @@
 
 void TreeSearchPanel::_initialize_controls() {
 	line_edit_search = memnew(LineEdit);
-	check_button_filter_highlight = memnew(CheckButton);
+	check_button_filter_highlight = memnew(CheckBox);
 	close_button = memnew(Button);
-	label_highlight = memnew(Label);
 	label_filter = memnew(Label);
 
 	line_edit_search->set_placeholder(TTR("Search tree"));
 
-	label_highlight->set_text(TTR("Highlight"));
 	label_filter->set_text(TTR("Filter"));
 
 	BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
@@ -65,10 +63,9 @@ void TreeSearchPanel::_initialize_controls() {
 
 	_add_spacer(0.25); // otherwise the lineedits expand margin touches the left border.
 	add_child(line_edit_search);
-	_add_spacer();
-	add_child(label_highlight);
 	add_child(check_button_filter_highlight);
 	add_child(label_filter);
+	_add_spacer();
 	add_child(close_button);
 	_add_spacer(0.25);
 }
@@ -154,7 +151,7 @@ void TreeSearch::_filter_tree(const String &p_search_mask) {
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *cur_item = ordered_tree_items[i];
 
-		if (number_matches.has(cur_item)){
+		if (number_matches.has(cur_item)) {
 			continue;
 		}
 
@@ -388,7 +385,7 @@ void TreeSearch::_select_first_match() {
 	}
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		if (!_vector_has_bsearch(matching_entries, item)){
+		if (!_vector_has_bsearch(matching_entries, item)) {
 			continue;
 		}
 		String debug_string = "[";
@@ -418,7 +415,7 @@ void TreeSearch::_select_next_match() {
 	// find the best fitting entry.
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		if (!_vector_has_bsearch(matching_entries, item)){
+		if (!_vector_has_bsearch(matching_entries, item)) {
 			continue;
 		}
 
@@ -467,12 +464,11 @@ void TreeSearch::update_search(Tree *p_tree) {
 	_update_matching_entries(search_mask);
 	_update_number_matches();
 
-	if (search_mode == TreeSearchMode::HIGHLIGHT) {
-		_highlight_tree(search_mask);
-		if (!search_panel->is_connected("text_submitted", callable_mp(this, &TreeSearch::_select_next_match))) {
-			search_panel->connect("text_submitted", callable_mp(this, &TreeSearch::_select_next_match));
-		}
+	_highlight_tree(search_mask);
+	if (!search_panel->is_connected("text_submitted", callable_mp(this, &TreeSearch::_select_next_match))) {
+		search_panel->connect("text_submitted", callable_mp(this, &TreeSearch::_select_next_match));
 	}
+
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
 	}

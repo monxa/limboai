@@ -17,7 +17,7 @@
 #include "../bt/tasks/bt_task.h" // for tree item parsing
 
 #ifdef LIMBOAI_GDEXTENSION
-#include <godot_cpp/classes/check_button.hpp>
+#include <godot_cpp/classes/check_box.hpp>
 #include <godot_cpp/classes/h_flow_container.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/line_edit.hpp>
@@ -26,7 +26,7 @@
 #endif // LIMBOAI_GDEXTENSION
 
 #ifdef LIMBOAI_MODULE
-#include "scene/gui/check_button.h"
+#include "scene/gui/check_box.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
@@ -45,10 +45,9 @@ class TreeSearchPanel : public HFlowContainer {
 private:
 	Button *toggle_button_filter_highlight;
 	Button *close_button;
-	Label *label_highlight;
 	Label *label_filter;
 	LineEdit *line_edit_search;
-	CheckButton *check_button_filter_highlight;
+	CheckBox *check_button_filter_highlight;
 	void _initialize_controls();
 	void _initialize_close_callbacks();
 	void _add_spacer(float width_multiplier = 1.f);
