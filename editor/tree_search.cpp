@@ -415,7 +415,7 @@ void TreeSearch::_select_next_match() {
 	// find the best fitting entry.
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		if (!_vector_has_bsearch(matching_entries, item)) {
+		if (!_vector_has_bsearch(matching_entries, item) || selected_idx >= i) {
 			continue;
 		}
 
@@ -457,7 +457,6 @@ void TreeSearch::update_search(Tree *p_tree) {
 	tree_reference = p_tree;
 
 	String search_mask = search_panel->get_text();
-	TreeItem *tree_root = p_tree->get_root();
 	TreeSearchMode search_mode = search_panel->get_search_mode();
 
 	_update_ordered_tree_items(p_tree->get_root());
