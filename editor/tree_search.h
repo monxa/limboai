@@ -60,7 +60,6 @@ private:
 
 protected:
 	static void _bind_methods();
-	void _process_shortcut_input(const Ref<InputEvent> &p_event);
 
 public:
 	TreeSearchMode get_search_mode();

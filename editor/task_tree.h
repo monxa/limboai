@@ -46,7 +46,7 @@ private:
 	bool editable;
 	bool updating_tree;
 	HashMap<RECT_CACHE_KEY, Rect2> probability_rect_cache;
-	TreeSearch * tree_search;
+	Ref<TreeSearch> tree_search;
 
 	struct ThemeCache {
 		Ref<Font> comment_font;

@@ -597,7 +597,7 @@ TaskTree::TaskTree() {
 
 	tree->set_drag_forwarding(callable_mp(this, &TaskTree::_get_drag_data_fw), callable_mp(this, &TaskTree::_can_drop_data_fw), callable_mp(this, &TaskTree::_drop_data_fw));
 
-	tree_search = memnew(TreeSearch);
+	tree_search.instantiate();
 	vbox_container->add_child(tree_search->search_panel);
 }
 
