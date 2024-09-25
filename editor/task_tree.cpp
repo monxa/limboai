@@ -106,6 +106,7 @@ void TaskTree::_update_item(TreeItem *p_item) {
 	if (!warning_text.is_empty()) {
 		p_item->add_button(0, theme_cache.task_warning_icon, 0, false, warning_text);
 	}
+	tree_search->on_item_edited(p_item); // this is necessary to preserve custom drawing from tree search.
 }
 
 void TaskTree::_update_tree() {
@@ -125,7 +126,7 @@ void TaskTree::_update_tree() {
 	for (const Ref<BTTask> &task : selection) {
 		add_selection(task);
 	}
-	tree_search.apply_search(tree);
+	tree_search->update_search(tree);
 }
 
 TreeItem *TaskTree::_find_item(const Ref<BTTask> &p_task) const {
@@ -532,6 +533,8 @@ void TaskTree::_notification(int p_what) {
 			tree->connect("multi_selected", callable_mp(this, &TaskTree::_on_item_selected).unbind(3), CONNECT_DEFERRED);
 			tree->connect("item_activated", callable_mp(this, &TaskTree::_on_item_activated));
 			tree->connect("item_collapsed", callable_mp(this, &TaskTree::_on_item_collapsed));
+			tree_search->search_panel->connect("text_changed", callable_mp(this, &TaskTree::_update_tree).unbind(1));
+			tree_search->search_panel->connect("visibility_changed", callable_mp(this, &TaskTree::_update_tree));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			_do_update_theme_item_cache();
@@ -564,6 +567,10 @@ void TaskTree::_bind_methods() {
 			PropertyInfo(Variant::INT, "type")));
 }
 
+void TaskTree::tree_search_show_and_focus() {
+	tree_search->search_panel->show_and_focus();
+}
+
 TaskTree::TaskTree() {
 	editable = true;
 	updating_tree = false;
@@ -587,7 +594,9 @@ TaskTree::TaskTree() {
 	tree->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 
 	tree->set_drag_forwarding(callable_mp(this, &TaskTree::_get_drag_data_fw), callable_mp(this, &TaskTree::_can_drop_data_fw), callable_mp(this, &TaskTree::_drop_data_fw));
-	vbox_container->add_child(tree_search.search_panel);
+	
+	tree_search = memnew(TreeSearch);
+	vbox_container->add_child(tree_search->search_panel);
 }
 
 TaskTree::~TaskTree() {

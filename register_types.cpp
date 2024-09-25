@@ -269,6 +269,7 @@ void initialize_limboai_module(ModuleInitializationLevel p_level) {
 		GDREGISTER_CLASS(LimboAIEditor);
 		GDREGISTER_CLASS(LimboAIEditorPlugin);
 		GDREGISTER_INTERNAL_CLASS(TreeSearchPanel);
+		GDREGISTER_INTERNAL_CLASS(TreeSearch);
 #endif // LIMBOAI_GDEXTENSION
 
 		EditorPlugins::add_by_type<LimboAIEditorPlugin>();

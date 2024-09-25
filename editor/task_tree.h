@@ -46,7 +46,7 @@ private:
 	bool editable;
 	bool updating_tree;
 	HashMap<RECT_CACHE_KEY, Rect2> probability_rect_cache;
-	TreeSearch tree_search;
+	TreeSearch * tree_search;
 
 	struct ThemeCache {
 		Ref<Font> comment_font;
@@ -101,6 +101,7 @@ public:
 	Ref<BTTask> get_selected() const;
 	Vector<Ref<BTTask>> get_selected_tasks() const;
 	void clear_selection();
+	void tree_search_show_and_focus();
 
 	Rect2 get_selected_probability_rect() const;
 	double get_selected_probability_weight() const;
@@ -108,6 +109,7 @@ public:
 	bool selected_has_probability() const;
 
 	virtual bool editor_can_reload_from_file() { return false; }
+	
 
 	TaskTree();
 	~TaskTree();

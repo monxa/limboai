@@ -457,6 +457,8 @@ void LimboAIEditor::_process_shortcut_input(const Ref<InputEvent> &p_event) {
 			_on_save_pressed();
 		} else if (LW_IS_SHORTCUT("limbo_ai/load_behavior_tree", p_event)) {
 			_popup_file_dialog(load_dialog);
+		} else if (LW_IS_SHORTCUT("limbo_ai/search_tree", p_event)) {
+			task_tree->tree_search_show_and_focus();
 		} else {
 			handled = false;
 		}
@@ -800,7 +802,7 @@ void LimboAIEditor::_misc_option_selected(int p_id) {
 			EDIT_SCRIPT(template_path);
 		} break;
 		case MISC_SEARCH_TREE: {
-			UtilityFunctions::print("Search Tree");
+			task_tree->tree_search_show_and_focus();
 		}
 	}
 }
@@ -1520,6 +1522,8 @@ LimboAIEditor::LimboAIEditor() {
 	LW_SHORTCUT("limbo_ai/jump_to_owner", TTR("Jump to Owner"), (Key)(LW_KEY_MASK(CMD_OR_CTRL) | LW_KEY(J)));
 	LW_SHORTCUT("limbo_ai/close_tab", TTR("Close Tab"), (Key)(LW_KEY_MASK(CMD_OR_CTRL) | LW_KEY(W)));
 	LW_SHORTCUT("limbo_ai/find_task", TTR("Find Task"), (Key)(LW_KEY_MASK(CMD_OR_CTRL) | LW_KEY(F)));
+	LW_SHORTCUT("limbo_ai/hide_tree_search", TTR("Hide BehaviorTrees Search Panel"), (Key)(LW_KEY(ESCAPE)));
+	LW_SHORTCUT("limbo_ai/search_tree", TTR("Shows the BehaviorTree Search Panel"), (Key)(LW_KEY_MASK(CMD_OR_CTRL) | LW_KEY(F)));
 
 	set_process_shortcut_input(true);
 
