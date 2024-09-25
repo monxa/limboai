@@ -18,7 +18,7 @@
 
 #ifdef LIMBOAI_GDEXTENSION
 #include <godot_cpp/classes/check_button.hpp>
-#include <godot_cpp/classes/h_box_container.hpp>
+#include <godot_cpp/classes/h_flow_container.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/line_edit.hpp>
 #include <godot_cpp/classes/tree.hpp>
@@ -27,7 +27,7 @@
 
 #ifdef LIMBOAI_MODULE
 #include "scene/gui/check_button.h"
-#include "scene/gui/box_container.h"
+#include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
@@ -40,8 +40,8 @@ enum TreeSearchMode {
 	FILTER = 1
 };
 
-class TreeSearchPanel : public HBoxContainer {
-	GDCLASS(TreeSearchPanel, HBoxContainer)
+class TreeSearchPanel : public HFlowContainer {
+	GDCLASS(TreeSearchPanel, HFlowContainer)
 private:
 	Button *toggle_button_filter_highlight;
 	Button *close_button;
