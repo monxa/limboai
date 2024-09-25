@@ -56,6 +56,7 @@ private:
 	void _on_draw_highlight(TreeItem *item, Rect2 rect);
 	void _emit_text_changed(const String &text);
 	void _emit_text_submitted(const String &p_text);
+	void _emit_filter_toggled();
 	void _notification(int p_what);
 
 protected:
@@ -90,12 +91,14 @@ private:
 	HashMap<TreeItem *, int> number_matches;
 	HashMap<TreeItem *, Callable> callable_cache;
 
-	void _filter_tree(TreeItem *tree_item, const String &search_mask);
+	void _filter_tree(const String &p_search_mask);
 	void _highlight_tree(const String &p_search_mask);
 	void _draw_highlight_item(TreeItem *tree_item, Rect2 rect, String search_mask, Callable parent_draw_method);
 	void _update_matching_entries(const String &search_mask);
 	void _update_ordered_tree_items(TreeItem *tree_item);
 	void _update_number_matches();
+
+
 	Vector<TreeItem *> _find_matching_entries(TreeItem *tree_item, const String &search_mask, Vector<TreeItem *> &buffer);
 	StringSearchIndices _substring_bounds(const String &searchable, const String &search_mask) const;
 
@@ -103,6 +106,8 @@ private:
 	void _select_first_match();
 	void _select_next_match();
 
+	template<typename T>
+	bool _vector_has_bsearch(Vector<T*> p_vec, T* element);
 protected:
 	static void _bind_methods() {}
 
@@ -118,3 +123,5 @@ public:
 
 #endif // TREE_SEARCH_H
 #endif // ! TOOLS_ENABLED
+
+

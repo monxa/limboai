@@ -93,6 +93,10 @@ void TreeSearchPanel::_emit_text_submitted(const String &p_text) {
 	this->emit_signal("text_submitted");
 }
 
+void TreeSearchPanel::_emit_filter_toggled() {
+	this->emit_signal("filter_toggled");
+}
+
 void TreeSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
@@ -100,6 +104,7 @@ void TreeSearchPanel::_notification(int p_what) {
 			line_edit_search->connect("text_changed", callable_mp(this, &TreeSearchPanel::_emit_text_changed));
 			_initialize_close_callbacks();
 			line_edit_search->connect("text_submitted", callable_mp(this, &TreeSearchPanel::_emit_text_submitted));
+			check_button_filter_highlight->connect("pressed", callable_mp(this, &TreeSearchPanel::_emit_filter_toggled));
 			break;
 		}
 	}
@@ -108,6 +113,7 @@ void TreeSearchPanel::_notification(int p_what) {
 void TreeSearchPanel::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("text_changed"));
 	ADD_SIGNAL(MethodInfo("text_submitted"));
+	ADD_SIGNAL(MethodInfo("filter_toggled"));
 }
 
 TreeSearchPanel::TreeSearchPanel() {
@@ -140,10 +146,26 @@ void TreeSearchPanel::show_and_focus() {
 
 /* ------- TreeSearch ------- */
 
-void TreeSearch::_filter_tree(TreeItem *p_tree_item, const String &p_search_mask) {
-	for (int i = 0; i < ordered_tree_items.size(); i++) {
+void TreeSearch::_filter_tree(const String &p_search_mask) {
+	if (matching_entries.size() == 0) {
+		return;
 	}
-	PRINT_LINE("filter tree not yet implemented!", p_search_mask);
+
+	for (int i = 0; i < ordered_tree_items.size(); i++) {
+		TreeItem *cur_item = ordered_tree_items[i];
+
+		if (number_matches.has(cur_item)){
+			continue;
+		}
+
+		TreeItem *first_counting_ancestor = cur_item;
+		while (first_counting_ancestor && !number_matches.has(first_counting_ancestor)) {
+			first_counting_ancestor = first_counting_ancestor->get_parent();
+		}
+		if (!first_counting_ancestor || first_counting_ancestor == tree_reference->get_root() || !_vector_has_bsearch(matching_entries, first_counting_ancestor)) {
+			cur_item->set_visible(false);
+		}
+	}
 }
 
 void TreeSearch::_highlight_tree(const String &p_search_mask) {
@@ -366,8 +388,7 @@ void TreeSearch::_select_first_match() {
 	}
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		int match_idx = matching_entries.bsearch(item, true);
-		if (match_idx < 0 || match_idx >= matching_entries.size() || matching_entries[match_idx] != item) {
+		if (!_vector_has_bsearch(matching_entries, item)){
 			continue;
 		}
 		String debug_string = "[";
@@ -397,8 +418,7 @@ void TreeSearch::_select_next_match() {
 	// find the best fitting entry.
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		int match_idx = matching_entries.bsearch(item, true);
-		if (match_idx < 0 || match_idx >= matching_entries.size() || selected_idx >= i || matching_entries[match_idx] != item) {
+		if (!_vector_has_bsearch(matching_entries, item)){
 			continue;
 		}
 
@@ -406,6 +426,14 @@ void TreeSearch::_select_next_match() {
 		return;
 	}
 	_select_first_match(); // wrap around.
+}
+
+template <typename T>
+inline bool TreeSearch::_vector_has_bsearch(Vector<T *> p_vec, T *element) {
+	int idx = p_vec.bsearch(element, true);
+	bool in_array = idx >= 0 && idx < p_vec.size();
+
+	return in_array && p_vec[idx] == element;
 }
 
 void TreeSearch::on_item_edited(TreeItem *item) {
@@ -446,7 +474,7 @@ void TreeSearch::update_search(Tree *p_tree) {
 		}
 	}
 	if (search_mode == TreeSearchMode::FILTER) {
-		_filter_tree(tree_root, search_mask);
+		_filter_tree(search_mask);
 	}
 }
 
