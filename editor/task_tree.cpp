@@ -533,10 +533,8 @@ void TaskTree::_notification(int p_what) {
 			tree->connect("multi_selected", callable_mp(this, &TaskTree::_on_item_selected).unbind(3), CONNECT_DEFERRED);
 			tree->connect("item_activated", callable_mp(this, &TaskTree::_on_item_activated));
 			tree->connect("item_collapsed", callable_mp(this, &TaskTree::_on_item_collapsed));
-			// TODO: Simplify these signals into one (candidate names: changed, updated, update_requested):
-			tree_search->search_panel->connect("text_changed", callable_mp(this, &TaskTree::_update_tree).unbind(1));
+			tree_search->search_panel->connect("update_requested", callable_mp(this, &TaskTree::_update_tree));
 			tree_search->search_panel->connect("visibility_changed", callable_mp(this, &TaskTree::_update_tree));
-			tree_search->search_panel->connect("filter_toggled", callable_mp(this, &TaskTree::_update_tree));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			_do_update_theme_item_cache();

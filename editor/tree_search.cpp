@@ -82,35 +82,30 @@ void TreeSearchPanel::_add_spacer(float p_width_multiplier) {
 	add_child(spacer);
 }
 
-void TreeSearchPanel::_emit_text_changed(const String &p_text) {
-	this->emit_signal("text_changed", p_text);
-}
-
 void TreeSearchPanel::_emit_text_submitted(const String &p_text) {
 	this->emit_signal("text_submitted");
 }
 
-void TreeSearchPanel::_emit_filter_toggled() {
-	this->emit_signal("filter_toggled");
+void TreeSearchPanel::_emit_update_requested(){
+	emit_signal("update_requested");
 }
 
 void TreeSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
 			_initialize_controls();
-			line_edit_search->connect("text_changed", callable_mp(this, &TreeSearchPanel::_emit_text_changed));
+			line_edit_search->connect("text_changed", callable_mp(this, &TreeSearchPanel::_emit_update_requested).unbind(1));
 			_initialize_close_callbacks();
 			line_edit_search->connect("text_submitted", callable_mp(this, &TreeSearchPanel::_emit_text_submitted));
-			check_button_filter_highlight->connect("pressed", callable_mp(this, &TreeSearchPanel::_emit_filter_toggled));
+			check_button_filter_highlight->connect("pressed", callable_mp(this, &TreeSearchPanel::_emit_update_requested));
 			break;
 		}
 	}
 }
 
 void TreeSearchPanel::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("text_changed"));
+	ADD_SIGNAL(MethodInfo("update_requested"));
 	ADD_SIGNAL(MethodInfo("text_submitted"));
-	ADD_SIGNAL(MethodInfo("filter_toggled"));
 }
 
 TreeSearchPanel::TreeSearchPanel() {

@@ -53,9 +53,8 @@ private:
 	void _add_spacer(float width_multiplier = 1.f);
 
 	void _on_draw_highlight(TreeItem *p_item, Rect2 p_rect);
-	void _emit_text_changed(const String &p_text);
 	void _emit_text_submitted(const String &p_text);
-	void _emit_filter_toggled();
+	void _emit_update_requested();
 	void _notification(int p_what);
 
 protected:
