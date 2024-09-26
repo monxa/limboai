@@ -52,8 +52,8 @@ private:
 	void _initialize_close_callbacks();
 	void _add_spacer(float width_multiplier = 1.f);
 
-	void _on_draw_highlight(TreeItem *item, Rect2 rect);
-	void _emit_text_changed(const String &text);
+	void _on_draw_highlight(TreeItem *p_item, Rect2 p_rect);
+	void _emit_text_changed(const String &p_text);
 	void _emit_text_submitted(const String &p_text);
 	void _emit_filter_toggled();
 	void _notification(int p_what);
@@ -91,16 +91,16 @@ private:
 
 	void _filter_tree(const String &p_search_mask);
 	void _highlight_tree(const String &p_search_mask);
-	void _draw_highlight_item(TreeItem *tree_item, Rect2 rect, String search_mask, Callable parent_draw_method);
-	void _update_matching_entries(const String &search_mask);
-	void _update_ordered_tree_items(TreeItem *tree_item);
+	void _draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, String p_search_mask, Callable p_parent_draw_method);
+	void _update_matching_entries(const String &p_search_mask);
+	void _update_ordered_tree_items(TreeItem *p_tree_item);
 	void _update_number_matches();
 
 
-	Vector<TreeItem *> _find_matching_entries(TreeItem *tree_item, const String &search_mask, Vector<TreeItem *> &buffer);
-	StringSearchIndices _substring_bounds(const String &searchable, const String &search_mask) const;
+	Vector<TreeItem *> _find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_buffer);
+	StringSearchIndices _substring_bounds(const String &p_searchable, const String &p_search_mask) const;
 
-	void _select_item(TreeItem *item);
+	void _select_item(TreeItem *p_item);
 	void _select_first_match();
 	void _select_next_match();
 
@@ -111,12 +111,11 @@ protected:
 
 public:
 	// we will add everything from TaskTree.h
-	void update_search(Tree *tree);
-	void on_item_edited(TreeItem *item);
+	void update_search(Tree *p_tree);
+	void on_item_edited(TreeItem *p_item);
 	TreeSearchPanel *search_panel;
 
 	TreeSearch();
-	~TreeSearch();
 };
 
 #endif // TREE_SEARCH_H

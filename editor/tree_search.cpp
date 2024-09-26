@@ -173,7 +173,6 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 		int num_m = number_matches.has(entry) ? number_matches.get(entry) : 0;
 		if (num_m == 0) {
 			continue;
-			;
 		}
 
 		// make sure to also call any draw method already defined.
@@ -217,7 +216,7 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Strin
 			font = p_tree_item->get_tree()->get_theme_font(LW_NAME(font));
 		}
 		ERR_FAIL_NULL(font);
-		double font_size = p_tree_item->get_custom_font_size(0);
+		float font_size = p_tree_item->get_custom_font_size(0);
 		if (font_size == -1) {
 			font_size = p_tree_item->get_tree()->get_theme_font_size(LW_NAME(font));
 		}
@@ -273,9 +272,9 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Strin
 	}
 }
 
-void TreeSearch::_update_matching_entries(const String &search_mask) {
+void TreeSearch::_update_matching_entries(const String &p_search_mask) {
 	Vector<TreeItem *> accum;
-	matching_entries = _find_matching_entries(tree_reference->get_root(), search_mask, accum);
+	matching_entries = _find_matching_entries(tree_reference->get_root(), p_search_mask, accum);
 }
 
 /* this linearizes the tree into [ordered_tree_items] like so:
@@ -367,16 +366,21 @@ TreeSearch::StringSearchIndices TreeSearch::_substring_bounds(const String &p_se
 	return result;
 }
 
-void TreeSearch::_select_item(TreeItem *item) {
-	if (!item)
+void TreeSearch::_select_item(TreeItem *p_item) {
+	if (!p_item)
 		return;
-	tree_reference->set_selected(item, 0);
-	tree_reference->scroll_to_item(item);
-	item = item->get_parent();
-	while (item) {
-		item->set_collapsed(false);
-		item = item->get_parent();
+	tree_reference->set_selected(p_item, 0);
+	
+	// first unfold ancestors
+	TreeItem * ancestor = p_item->get_parent();
+	ancestor = ancestor->get_parent();
+	while (ancestor) {
+		ancestor->set_collapsed(false);
+		ancestor = ancestor->get_parent();
 	}
+	// then scroll to [item]
+	tree_reference->scroll_to_item(p_item);
+
 }
 
 void TreeSearch::_select_first_match() {
@@ -475,9 +479,6 @@ void TreeSearch::update_search(Tree *p_tree) {
 
 TreeSearch::TreeSearch() {
 	search_panel = memnew(TreeSearchPanel);
-}
-
-TreeSearch::~TreeSearch() {
 }
 
 /* !TreeSearch */
