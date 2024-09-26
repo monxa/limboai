@@ -95,7 +95,6 @@ private:
 	void _update_ordered_tree_items(TreeItem *p_tree_item);
 	void _update_number_matches();
 
-
 	Vector<TreeItem *> _find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_buffer);
 	StringSearchIndices _substring_bounds(const String &p_searchable, const String &p_search_mask) const;
 
@@ -103,8 +102,9 @@ private:
 	void _select_first_match();
 	void _select_next_match();
 
-	template<typename T>
-	bool _vector_has_bsearch(Vector<T*> p_vec, T* element);
+	template <typename T>
+	bool _vector_has_bsearch(Vector<T *> p_vec, T *element);
+
 protected:
 	static void _bind_methods() {}
 
@@ -119,5 +119,3 @@ public:
 
 #endif // TREE_SEARCH_H
 #endif // ! TOOLS_ENABLED
-
-

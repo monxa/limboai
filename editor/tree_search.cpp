@@ -35,6 +35,7 @@
 #include <godot_cpp/classes/style_box_flat.hpp>
 #include <godot_cpp/classes/viewport.hpp>
 #include <godot_cpp/core/math.hpp>
+
 #endif // LIMBOAI_GDEXTENSION
 
 #define UPPER_BOUND (1 << 15) // for substring search.
@@ -58,14 +59,16 @@ void TreeSearchPanel::_initialize_controls() {
 	this->set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
 	this->set_v_size_flags(SIZE_SHRINK_CENTER); // Do not expand vertically
 
-	// hack add separator to the left so line edit doesn't clip.
 	line_edit_search->set_h_size_flags(SIZE_EXPAND_FILL);
 
 	_add_spacer(0.25); // otherwise the lineedits expand margin touches the left border.
 	add_child(line_edit_search);
+	_add_spacer(0.25);
+
 	add_child(check_button_filter_highlight);
 	add_child(label_filter);
-	_add_spacer();
+
+	_add_spacer(0.25);
 	add_child(close_button);
 	_add_spacer(0.25);
 }
@@ -86,7 +89,7 @@ void TreeSearchPanel::_emit_text_submitted(const String &p_text) {
 	this->emit_signal("text_submitted");
 }
 
-void TreeSearchPanel::_emit_update_requested(){
+void TreeSearchPanel::_emit_update_requested() {
 	emit_signal("update_requested");
 }
 
@@ -364,18 +367,21 @@ TreeSearch::StringSearchIndices TreeSearch::_substring_bounds(const String &p_se
 void TreeSearch::_select_item(TreeItem *p_item) {
 	if (!p_item)
 		return;
-	tree_reference->set_selected(p_item, 0);
-	
+
 	// first unfold ancestors
-	TreeItem * ancestor = p_item->get_parent();
+	TreeItem *ancestor = p_item->get_parent();
 	ancestor = ancestor->get_parent();
 	while (ancestor) {
 		ancestor->set_collapsed(false);
 		ancestor = ancestor->get_parent();
 	}
-	// then scroll to [item]
+
+	//then scroll to [item]
 	tree_reference->scroll_to_item(p_item);
 
+	// ...and select it
+	tree_reference->deselect_all();
+	tree_reference->set_selected(p_item, 0);
 }
 
 void TreeSearch::_select_first_match() {
