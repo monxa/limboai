@@ -241,8 +241,8 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 		Rect2 draw_rect = p_rect;
 
 		Vector2 rect_offset = Vector2(substring_before_size.x, 0);
-		rect_offset.x += p_tree_item->get_icon_max_width(0) * EDSCALE;
-		rect_offset.x += (h_sep + 4.) * EDSCALE; // TODO: Find better way to determine texts x-offset
+		rect_offset.x += p_tree_item->get_icon_max_width(0);
+		rect_offset.x += (h_sep + 4. * EDSCALE); // TODO: Find better way to determine texts x-offset
 		rect_offset.y = (p_rect.size.y - substring_match_size.y) / 2; // center box vertically
 
 		draw_rect.position += rect_offset - PADDING / 2;
@@ -252,7 +252,7 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 		stylebox->draw(p_tree_item->get_tree()->get_canvas_item(), draw_rect);
 	}
 
-	// second part: draw number (TODO: maybe use columns)
+	// second part: draw number
 	int num_mat = number_matches.has(p_tree_item) ? number_matches.get(p_tree_item) : 0;
 	if (num_mat > 0) {
 		float h_sep = p_tree_item->get_tree()->get_theme_constant("h_separation");
