@@ -533,14 +533,15 @@ void TaskTree::_notification(int p_what) {
 			tree->connect("multi_selected", callable_mp(this, &TaskTree::_on_item_selected).unbind(3), CONNECT_DEFERRED);
 			tree->connect("item_activated", callable_mp(this, &TaskTree::_on_item_activated));
 			tree->connect("item_collapsed", callable_mp(this, &TaskTree::_on_item_collapsed));
-			tree_search->search_panel->connect("update_requested", callable_mp(this, &TaskTree::_update_tree));
-			tree_search->search_panel->connect("visibility_changed", callable_mp(this, &TaskTree::_update_tree));
+			tree_search_panel->connect("update_requested", callable_mp(this, &TaskTree::_update_tree));
+			tree_search_panel->connect("visibility_changed", callable_mp(this, &TaskTree::_update_tree));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			_do_update_theme_item_cache();
 			_update_tree();
 		} break;
 	}
+
 }
 
 void TaskTree::_bind_methods() {
@@ -568,7 +569,8 @@ void TaskTree::_bind_methods() {
 }
 
 void TaskTree::tree_search_show_and_focus() {
-	tree_search->search_panel->show_and_focus();
+	ERR_FAIL_NULL(tree_search);
+	tree_search_panel->show_and_focus();
 }
 
 TaskTree::TaskTree() {
@@ -595,8 +597,9 @@ TaskTree::TaskTree() {
 
 	tree->set_drag_forwarding(callable_mp(this, &TaskTree::_get_drag_data_fw), callable_mp(this, &TaskTree::_can_drop_data_fw), callable_mp(this, &TaskTree::_drop_data_fw));
 
-	tree_search.instantiate();
-	vbox_container->add_child(tree_search->search_panel);
+	tree_search_panel = memnew(TreeSearchPanel);
+	tree_search = Ref(memnew(TreeSearch(tree_search_panel)));
+	vbox_container->add_child(tree_search_panel);
 }
 
 TaskTree::~TaskTree() {

@@ -46,7 +46,9 @@ private:
 	bool editable;
 	bool updating_tree;
 	HashMap<RECT_CACHE_KEY, Rect2> probability_rect_cache;
+
 	Ref<TreeSearch> tree_search;
+	TreeSearchPanel *tree_search_panel;
 
 	struct ThemeCache {
 		Ref<Font> comment_font;
@@ -109,7 +111,6 @@ public:
 	bool selected_has_probability() const;
 
 	virtual bool editor_can_reload_from_file() { return false; }
-	
 
 	TaskTree();
 	~TaskTree();

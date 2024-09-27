@@ -367,15 +367,14 @@ TreeSearch::StringSearchIndices TreeSearch::_substring_bounds(const String &p_se
 void TreeSearch::_select_item(TreeItem *p_item) {
 	if (!p_item)
 		return;
+	ERR_FAIL_COND(!tree_reference || p_item->get_tree() != tree_reference);
 
 	// first unfold ancestors
 	TreeItem *ancestor = p_item->get_parent();
-	ancestor = ancestor->get_parent();
 	while (ancestor) {
 		ancestor->set_collapsed(false);
 		ancestor = ancestor->get_parent();
 	}
-
 	//then scroll to [item]
 	tree_reference->scroll_to_item(p_item);
 
@@ -476,10 +475,11 @@ void TreeSearch::update_search(Tree *p_tree) {
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
 	}
+	
 }
 
-TreeSearch::TreeSearch() {
-	search_panel = memnew(TreeSearchPanel);
+TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
+	search_panel = p_search_panel;
 }
 
 /* !TreeSearch */

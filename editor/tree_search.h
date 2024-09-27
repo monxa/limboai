@@ -81,8 +81,10 @@ private:
 		}
 	};
 
-	Tree *tree_reference;
+	TreeSearchPanel *search_panel;
 
+	// These variables are updated every time the update_search method is called.
+	Tree *tree_reference;
 	Vector<TreeItem *> ordered_tree_items;
 	Vector<TreeItem *> matching_entries;
 	HashMap<TreeItem *, int> number_matches;
@@ -112,9 +114,9 @@ public:
 	// we will add everything from TaskTree.h
 	void update_search(Tree *p_tree);
 	void on_item_edited(TreeItem *p_item);
-	TreeSearchPanel *search_panel;
 
-	TreeSearch();
+	TreeSearch(){ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly");}
+	TreeSearch(TreeSearchPanel * p_search_panel);
 };
 
 #endif // TREE_SEARCH_H
