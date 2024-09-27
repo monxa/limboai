@@ -47,6 +47,12 @@ TreeItem *TaskTree::_create_tree(const Ref<BTTask> &p_task, TreeItem *p_parent, 
 		_create_tree(p_task->get_child(i), item);
 	}
 	_update_item(item);
+	
+	// update TreeSearch if root task was created
+	if (tree->get_root() == item){
+		tree_search->update_search(tree);
+	}
+
 	return item;
 }
 
@@ -126,7 +132,6 @@ void TaskTree::_update_tree() {
 	for (const Ref<BTTask> &task : selection) {
 		add_selection(task);
 	}
-	tree_search->update_search(tree);
 }
 
 TreeItem *TaskTree::_find_item(const Ref<BTTask> &p_task) const {
