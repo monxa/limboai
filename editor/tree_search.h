@@ -14,15 +14,13 @@
 #ifndef TREE_SEARCH_H
 #define TREE_SEARCH_H
 
-#include "../bt/tasks/bt_task.h" // for tree item parsing
-
 #ifdef LIMBOAI_GDEXTENSION
 #include <godot_cpp/classes/check_box.hpp>
 #include <godot_cpp/classes/h_flow_container.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/line_edit.hpp>
 #include <godot_cpp/classes/tree.hpp>
-
+#include <godot_cpp/templates/hash_map.hpp>
 #endif // LIMBOAI_GDEXTENSION
 
 #ifdef LIMBOAI_MODULE
@@ -31,6 +29,7 @@
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
+#include "core/templates/hash_map.h"
 #endif // LIMBOAI_MODULE
 
 using namespace godot;
@@ -83,21 +82,26 @@ private:
 
 	TreeSearchPanel *search_panel;
 
-	// These variables are updated every time the update_search method is called.
+	// For TaskTree: These are updated when the tree is updated through TaskTree::_create_tree.
 	Tree *tree_reference;
 	Vector<TreeItem *> ordered_tree_items;
 	Vector<TreeItem *> matching_entries;
 	HashMap<TreeItem *, int> number_matches;
 	HashMap<TreeItem *, Callable> callable_cache;
 
+	// Update_search() calls these
 	void _filter_tree(const String &p_search_mask);
 	void _highlight_tree(const String &p_search_mask);
-	void _draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, String p_search_mask, Callable p_parent_draw_method);
+
+	// Custom draw-Callback (bind inherited Callable).
+	void _draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Callable p_parent_draw_method);
+	
 	void _update_matching_entries(const String &p_search_mask);
 	void _update_ordered_tree_items(TreeItem *p_tree_item);
 	void _update_number_matches();
 
 	Vector<TreeItem *> _find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_buffer);
+	String _get_search_mask();
 	StringSearchIndices _substring_bounds(const String &p_searchable, const String &p_search_mask) const;
 
 	void _select_item(TreeItem *p_item);
@@ -111,7 +115,6 @@ protected:
 	static void _bind_methods() {}
 
 public:
-	// we will add everything from TaskTree.h
 	void update_search(Tree *p_tree);
 	void on_item_edited(TreeItem *p_item);
 

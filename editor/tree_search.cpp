@@ -13,7 +13,6 @@
 
 #include "tree_search.h"
 
-#include "../bt/behavior_tree.h"
 #include "../util/limbo_compat.h" // for edscale
 #include "../util/limbo_string_names.h"
 #include "../util/limbo_utility.h"
@@ -179,7 +178,7 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 			parent_draw_method = entry->get_custom_draw_callback(0);
 		}
 
-		Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(p_search_mask, parent_draw_method);
+		Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(parent_draw_method);
 
 		// -- this is necessary because of the modularity of this implementation
 		// cache render properties of entry
@@ -199,10 +198,11 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 	}
 }
 
-// custom draw callback for highlighting (bind 2)
-void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, String p_search_mask, Callable p_parent_draw_method) {
-	if (!p_tree_item)
+// custom draw callback for highlighting (bind the parent_drw_method to this)
+void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Callable p_parent_draw_method) {
+	if (!p_tree_item){
 		return;
+	}
 	// call any parent draw methods such as for probability FIRST.
 	p_parent_draw_method.call(p_tree_item, p_rect);
 
@@ -221,7 +221,7 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Strin
 
 		// substring size
 		String string_full = p_tree_item->get_text(0);
-		StringSearchIndices substring_idx = _substring_bounds(string_full, p_search_mask);
+		StringSearchIndices substring_idx = _substring_bounds(string_full, _get_search_mask());
 
 		String substring_match = string_full.substr(substring_idx.lower, substring_idx.upper - substring_idx.lower);
 		Vector2 substring_match_size = font->get_string_size(substring_match, HORIZONTAL_ALIGNMENT_LEFT, -1.f, font_size);
@@ -308,6 +308,11 @@ void TreeSearch::_update_number_matches() {
 			item = item->get_parent();
 		}
 	}
+}
+
+String TreeSearch::_get_search_mask() {
+	ERR_FAIL_COND_V(!search_panel, "");
+	return search_panel->get_text();
 }
 
 Vector<TreeItem *> TreeSearch::_find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_accum) {
