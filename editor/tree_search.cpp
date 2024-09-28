@@ -49,8 +49,6 @@ void TreeSearchPanel::_initialize_controls() {
 
 	line_edit_search->set_placeholder(TTR("Search tree"));
 
-	label_filter->set_text(TTR("Filter"));
-
 	close_button->set_theme_type_variation("FlatButton");
 
 	// positioning and sizing
@@ -94,6 +92,9 @@ void TreeSearchPanel::_notification(int p_what) {
 			check_button_filter_highlight->connect("pressed", c_update_requested);
 			line_edit_search->connect("text_submitted", c_text_submitted.unbind(1));
 			break;
+		}
+		case NOTIFICATION_THEME_CHANGED: {
+			label_filter->set_text(TTR("Filter"));
 		}
 	}
 }
@@ -263,7 +264,8 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 
 void TreeSearch::_update_matching_entries(const String &p_search_mask) {
 	Vector<TreeItem *> accum;
-	matching_entries = _find_matching_entries(tree_reference->get_root(), p_search_mask, accum);
+	_find_matching_entries(tree_reference->get_root(), p_search_mask, accum);
+	matching_entries = accum;
 }
 
 /* this linearizes the tree into [ordered_tree_items] like so:
@@ -306,13 +308,14 @@ String TreeSearch::_get_search_mask() {
 	return search_panel->get_text();
 }
 
-Vector<TreeItem *> TreeSearch::_find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_accum) {
-	if (!p_tree_item)
-		return p_accum;
+void TreeSearch::_find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_accum) {
+	if (!p_tree_item) {
+		return;
+	}
 	StringSearchIndices item_search_indices = _substring_bounds(p_tree_item->get_text(0), p_search_mask);
-	if (item_search_indices.hit())
+	if (item_search_indices.hit()) {
 		p_accum.push_back(p_tree_item);
-
+	}
 	for (int i = 0; i < p_tree_item->get_child_count(); i++) {
 		TreeItem *child = p_tree_item->get_child(i);
 		_find_matching_entries(child, p_search_mask, p_accum);
@@ -323,7 +326,7 @@ Vector<TreeItem *> TreeSearch::_find_matching_entries(TreeItem *p_tree_item, con
 		p_accum.sort();
 	}
 
-	return p_accum;
+	return;
 }
 
 // Returns the lower and upper bounds of a substring. Does fuzzy search: Simply looks if words exist in right ordering.

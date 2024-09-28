@@ -69,7 +69,7 @@ private:
 	void _update_ordered_tree_items(TreeItem *p_tree_item);
 	void _update_number_matches();
 
-	Vector<TreeItem *> _find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_buffer);
+	void _find_matching_entries(TreeItem *p_tree_item, const String &p_search_mask, Vector<TreeItem *> &p_accum);
 	String _get_search_mask();
 	StringSearchIndices _substring_bounds(const String &p_searchable, const String &p_search_mask) const;
 
