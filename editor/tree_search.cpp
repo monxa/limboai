@@ -95,6 +95,7 @@ void TreeSearchPanel::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
 			label_filter->set_text(TTR("Filter"));
+			break;
 		}
 	}
 }
