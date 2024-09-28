@@ -51,12 +51,11 @@ void TreeSearchPanel::_initialize_controls() {
 
 	label_filter->set_text(TTR("Filter"));
 
-	BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
 	close_button->set_theme_type_variation("FlatButton");
 
 	// positioning and sizing
-	this->set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
-	this->set_v_size_flags(SIZE_SHRINK_CENTER); // Do not expand vertically
+	set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
+	set_v_size_flags(SIZE_SHRINK_CENTER); // Do not expand vertically
 
 	line_edit_search->set_h_size_flags(SIZE_EXPAND_FILL);
 
@@ -72,34 +71,28 @@ void TreeSearchPanel::_initialize_controls() {
 	_add_spacer(0.25);
 }
 
-void TreeSearchPanel::_initialize_close_callbacks() {
-	Callable calleable_set_invisible = Callable(this, "set_visible").bind(false); // don't need a custom bind.
-	close_button->connect("pressed", calleable_set_invisible);
-	close_button->set_shortcut(LW_GET_SHORTCUT("limbo_ai/hide_tree_search"));
-}
-
 void TreeSearchPanel::_add_spacer(float p_width_multiplier) {
 	Control *spacer = memnew(Control);
 	spacer->set_custom_minimum_size(Vector2(8.0 * EDSCALE * p_width_multiplier, 0.0));
 	add_child(spacer);
 }
 
-void TreeSearchPanel::_emit_text_submitted(const String &p_text) {
-	this->emit_signal("text_submitted");
-}
-
-void TreeSearchPanel::_emit_update_requested() {
-	emit_signal("update_requested");
-}
-
 void TreeSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
-			_initialize_controls();
-			line_edit_search->connect("text_changed", callable_mp(this, &TreeSearchPanel::_emit_update_requested).unbind(1));
-			_initialize_close_callbacks();
-			line_edit_search->connect("text_submitted", callable_mp(this, &TreeSearchPanel::_emit_text_submitted));
-			check_button_filter_highlight->connect("pressed", callable_mp(this, &TreeSearchPanel::_emit_update_requested));
+			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
+
+			// close callbacks
+			close_button->connect("pressed", Callable(this, "set_visible").bind(false));
+			close_button->set_shortcut(LW_GET_SHORTCUT("limbo_ai/hide_tree_search"));
+
+			// search callbacks
+			Callable c_update_requested = Callable(this, "emit_signal").bind("update_requested");
+			Callable c_text_submitted = Callable((Object *)this, "emit_signal").bind("text_submitted");
+
+			line_edit_search->connect("text_changed", c_update_requested.unbind(1));
+			check_button_filter_highlight->connect("pressed", c_update_requested);
+			line_edit_search->connect("text_submitted", c_text_submitted.unbind(1));
 			break;
 		}
 	}
@@ -111,11 +104,8 @@ void TreeSearchPanel::_bind_methods() {
 }
 
 TreeSearchPanel::TreeSearchPanel() {
-	this->set_visible(false);
-}
-
-bool TreeSearchPanel::has_focus() {
-	return false;
+	_initialize_controls();
+	set_visible(false);
 }
 
 TreeSearch::TreeSearchMode TreeSearchPanel::get_search_mode() {
@@ -126,13 +116,14 @@ TreeSearch::TreeSearchMode TreeSearchPanel::get_search_mode() {
 }
 
 String TreeSearchPanel::get_text() {
-	if (!line_edit_search)
+	if (!line_edit_search) {
 		return String();
+	}
 	return line_edit_search->get_text();
 }
 
 void TreeSearchPanel::show_and_focus() {
-	this->set_visible(true);
+	set_visible(true);
 	line_edit_search->grab_focus();
 }
 

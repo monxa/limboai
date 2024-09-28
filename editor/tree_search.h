@@ -106,12 +106,9 @@ private:
 	LineEdit *line_edit_search;
 	CheckBox *check_button_filter_highlight;
 	void _initialize_controls();
-	void _initialize_close_callbacks();
 	void _add_spacer(float width_multiplier = 1.f);
 
 	void _on_draw_highlight(TreeItem *p_item, Rect2 p_rect);
-	void _emit_text_submitted(const String &p_text);
-	void _emit_update_requested();
 	void _notification(int p_what);
 
 protected:
@@ -122,7 +119,6 @@ public:
 	String get_text();
 	void show_and_focus();
 	TreeSearchPanel();
-	bool has_focus();
 };
 
 #endif // TREE_SEARCH_H
