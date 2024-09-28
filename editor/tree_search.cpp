@@ -320,12 +320,18 @@ Vector<TreeItem *> TreeSearch::_find_matching_entries(TreeItem *p_tree_item, con
 		return p_accum;
 	StringSearchIndices item_search_indices = _substring_bounds(p_tree_item->get_text(0), p_search_mask);
 	if (item_search_indices.hit())
-		p_accum.insert(p_accum.bsearch(p_tree_item, true), p_tree_item);
+		p_accum.push_back(p_tree_item);
 
 	for (int i = 0; i < p_tree_item->get_child_count(); i++) {
 		TreeItem *child = p_tree_item->get_child(i);
 		_find_matching_entries(child, p_search_mask, p_accum);
 	}
+	
+	// sort the result if we are at the root
+	if (p_tree_item == p_tree_item->get_tree()->get_root()) {
+		p_accum.sort();
+	}
+
 	return p_accum;
 }
 
