@@ -78,7 +78,6 @@ void TreeSearchPanel::_add_spacer(float p_width_multiplier) {
 void TreeSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
-			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
 
 			// close callbacks
 			close_button->connect("pressed", Callable(this, "set_visible").bind(false));
@@ -94,6 +93,7 @@ void TreeSearchPanel::_notification(int p_what) {
 			break;
 		}
 		case NOTIFICATION_THEME_CHANGED: {
+			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
 			label_filter->set_text(TTR("Filter"));
 		}
 	}
@@ -397,7 +397,6 @@ void TreeSearch::_select_first_match() {
 		if (!_vector_has_bsearch(matching_entries, item)) {
 			continue;
 		}
-		String debug_string = "[";
 		_select_item(item);
 		return;
 	}
@@ -422,14 +421,12 @@ void TreeSearch::_select_next_match() {
 	}
 
 	// find the best fitting entry.
-	for (int i = 0; i < ordered_tree_items.size(); i++) {
+	for (int i = MAX(0, selected_idx) + 1; i < ordered_tree_items.size(); i++) {
 		TreeItem *item = ordered_tree_items[i];
-		if (!_vector_has_bsearch(matching_entries, item) || selected_idx >= i) {
-			continue;
+		if (_vector_has_bsearch(matching_entries, item)) {
+			_select_item(item);
+			return;
 		}
-
-		_select_item(item);
-		return;
 	}
 	_select_first_match(); // wrap around.
 }
@@ -473,9 +470,6 @@ void TreeSearch::update_search(Tree *p_tree) {
 	_update_number_matches();
 
 	_highlight_tree(search_mask);
-	if (!search_panel->is_connected("text_submitted", callable_mp(this, &TreeSearch::_select_next_match))) {
-		search_panel->connect("text_submitted", callable_mp(this, &TreeSearch::_select_next_match));
-	}
 
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
@@ -484,6 +478,7 @@ void TreeSearch::update_search(Tree *p_tree) {
 
 TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
 	search_panel = p_search_panel;
+	search_panel->connect("text_submitted", callable_mp(this, &TreeSearch::_select_next_match));
 }
 
 /* !TreeSearch */
