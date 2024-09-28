@@ -34,39 +34,7 @@
 
 using namespace godot;
 
-enum TreeSearchMode {
-	HIGHLIGHT = 0,
-	FILTER = 1
-};
-
-class TreeSearchPanel : public HFlowContainer {
-	GDCLASS(TreeSearchPanel, HFlowContainer)
-
-private:
-	Button *toggle_button_filter_highlight;
-	Button *close_button;
-	Label *label_filter;
-	LineEdit *line_edit_search;
-	CheckBox *check_button_filter_highlight;
-	void _initialize_controls();
-	void _initialize_close_callbacks();
-	void _add_spacer(float width_multiplier = 1.f);
-
-	void _on_draw_highlight(TreeItem *p_item, Rect2 p_rect);
-	void _emit_text_submitted(const String &p_text);
-	void _emit_update_requested();
-	void _notification(int p_what);
-
-protected:
-	static void _bind_methods();
-
-public:
-	TreeSearchMode get_search_mode();
-	String get_text();
-	void show_and_focus();
-	TreeSearchPanel();
-	bool has_focus();
-};
+class TreeSearchPanel;
 
 class TreeSearch : public RefCounted {
 	GDCLASS(TreeSearch, RefCounted)
@@ -116,11 +84,45 @@ protected:
 	static void _bind_methods() {}
 
 public:
+	enum TreeSearchMode {
+		HIGHLIGHT = 0,
+		FILTER = 1
+	};
+
 	void update_search(Tree *p_tree);
 	void notify_item_edited(TreeItem *p_item);
 
 	TreeSearch() { ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly"); }
 	TreeSearch(TreeSearchPanel *p_search_panel);
+};
+
+class TreeSearchPanel : public HFlowContainer {
+	GDCLASS(TreeSearchPanel, HFlowContainer)
+
+private:
+	Button *toggle_button_filter_highlight;
+	Button *close_button;
+	Label *label_filter;
+	LineEdit *line_edit_search;
+	CheckBox *check_button_filter_highlight;
+	void _initialize_controls();
+	void _initialize_close_callbacks();
+	void _add_spacer(float width_multiplier = 1.f);
+
+	void _on_draw_highlight(TreeItem *p_item, Rect2 p_rect);
+	void _emit_text_submitted(const String &p_text);
+	void _emit_update_requested();
+	void _notification(int p_what);
+
+protected:
+	static void _bind_methods();
+
+public:
+	TreeSearch::TreeSearchMode get_search_mode();
+	String get_text();
+	void show_and_focus();
+	TreeSearchPanel();
+	bool has_focus();
 };
 
 #endif // TREE_SEARCH_H

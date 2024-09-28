@@ -118,11 +118,11 @@ bool TreeSearchPanel::has_focus() {
 	return false;
 }
 
-TreeSearchMode TreeSearchPanel::get_search_mode() {
+TreeSearch::TreeSearchMode TreeSearchPanel::get_search_mode() {
 	if (!check_button_filter_highlight || !check_button_filter_highlight->is_pressed()) {
-		return TreeSearchMode::HIGHLIGHT;
+		return TreeSearch::TreeSearchMode::HIGHLIGHT;
 	}
-	return TreeSearchMode::FILTER;
+	return TreeSearch::TreeSearchMode::FILTER;
 }
 
 String TreeSearchPanel::get_text() {
