@@ -49,7 +49,7 @@ void TreeSearchPanel::_initialize_controls() {
 
 	line_edit_search->set_placeholder(TTR("Search tree"));
 
-	close_button->set_theme_type_variation("FlatButton");
+	close_button->set_theme_type_variation(LW_NAME(FlatButton));
 
 	// positioning and sizing
 	set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
@@ -222,11 +222,11 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 		Vector2 substring_before_size = font->get_string_size(substring_before, HORIZONTAL_ALIGNMENT_LEFT, -1.f, font_size);
 
 		// stylebox
-		Ref<StyleBox> stylebox = p_tree_item->get_tree()->get_theme_stylebox("Focus");
+		Ref<StyleBox> stylebox = p_tree_item->get_tree()->get_theme_stylebox(LW_NAME(Focus));
 		ERR_FAIL_NULL(stylebox);
 
 		// extract separation
-		float h_sep = p_tree_item->get_tree()->get_theme_constant("h_separation");
+		float h_sep = p_tree_item->get_tree()->get_theme_constant(LW_NAME(h_separation));
 
 		// compose draw rect
 		const Vector2 PADDING = Vector2(4., 2.);
@@ -247,9 +247,9 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 	// second part: draw number
 	int num_mat = number_matches.has(p_tree_item) ? number_matches.get(p_tree_item) : 0;
 	if (num_mat > 0) {
-		float h_sep = p_tree_item->get_tree()->get_theme_constant("h_separation");
-		Ref<Font> font = tree_reference->get_theme_font("font");
-		float font_size = tree_reference->get_theme_font_size("font") * 0.75;
+		float h_sep = p_tree_item->get_tree()->get_theme_constant(LW_NAME(h_separation));
+		Ref<Font> font = tree_reference->get_theme_font(LW_NAME(font));
+		float font_size = tree_reference->get_theme_font_size(LW_NAME(font)) * 0.75;
 
 		String num_string = String::num_int64(num_mat);
 		Vector2 string_size = font->get_string_size(num_string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size);

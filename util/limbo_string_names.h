@@ -83,6 +83,8 @@ public:
 	StringName exited;
 	StringName favorite_tasks_changed;
 	StringName Favorites;
+	StringName FlatButton;
+	StringName Focus;
 	StringName focus_exited;
 	StringName font_color;
 	StringName font_size;
@@ -94,6 +96,7 @@ public:
 	StringName GuiTreeArrowRight;
 	StringName HeaderSmall;
 	StringName Help;
+	StringName h_separation;
 	StringName icon_max_width;
 	StringName class_icon_size;
 	StringName id_pressed;

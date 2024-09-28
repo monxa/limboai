@@ -67,6 +67,8 @@ LimboStringNames::LimboStringNames() {
 	exited = SN("exited");
 	favorite_tasks_changed = SN("favorite_tasks_changed");
 	Favorites = SN("Favorites");
+	FlatButton = SN("FlatButton");
+	Focus = SN("Focus");
 	focus_exited = SN("focus_exited");
 	font = SN("font");
 	font_color = SN("font_color");
@@ -78,6 +80,7 @@ LimboStringNames::LimboStringNames() {
 	GuiTreeArrowRight = SN("GuiTreeArrowRight");
 	HeaderSmall = SN("HeaderSmall");
 	Help = SN("Help");
+	h_separation = SN("h_separation");
 	icon_max_width = SN("icon_max_width");
 	class_icon_size = SN("class_icon_size");
 	id_pressed = SN("id_pressed");
