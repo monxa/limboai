@@ -24,12 +24,12 @@
 #endif // LIMBOAI_GDEXTENSION
 
 #ifdef LIMBOAI_MODULE
+#include "core/templates/hash_map.h"
 #include "scene/gui/check_box.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
-#include "core/templates/hash_map.h"
 #endif // LIMBOAI_MODULE
 
 using namespace godot;
@@ -41,6 +41,7 @@ enum TreeSearchMode {
 
 class TreeSearchPanel : public HFlowContainer {
 	GDCLASS(TreeSearchPanel, HFlowContainer)
+
 private:
 	Button *toggle_button_filter_highlight;
 	Button *close_button;
@@ -95,7 +96,7 @@ private:
 
 	// Custom draw-Callback (bind inherited Callable).
 	void _draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Callable p_parent_draw_method);
-	
+
 	void _update_matching_entries(const String &p_search_mask);
 	void _update_ordered_tree_items(TreeItem *p_tree_item);
 	void _update_number_matches();
@@ -116,10 +117,10 @@ protected:
 
 public:
 	void update_search(Tree *p_tree);
-	void on_item_edited(TreeItem *p_item);
+	void notify_item_edited(TreeItem *p_item);
 
-	TreeSearch(){ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly");}
-	TreeSearch(TreeSearchPanel * p_search_panel);
+	TreeSearch() { ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly"); }
+	TreeSearch(TreeSearchPanel *p_search_panel);
 };
 
 #endif // TREE_SEARCH_H

@@ -112,7 +112,7 @@ void TaskTree::_update_item(TreeItem *p_item) {
 	if (!warning_text.is_empty()) {
 		p_item->add_button(0, theme_cache.task_warning_icon, 0, false, warning_text);
 	}
-	tree_search->on_item_edited(p_item); // this is necessary to preserve custom drawing from tree search.
+	tree_search->notify_item_edited(p_item); // this is necessary to preserve custom drawing from tree search.
 }
 
 void TaskTree::_update_tree() {
@@ -582,8 +582,6 @@ TaskTree::TaskTree() {
 	editable = true;
 	updating_tree = false;
 
-	// for Tree + TreeSearch, we want a VBoxContainer. For now, rather than changing this classes type, let's do nesting:
-	// TaskTree -> VBoxContainer -> [Tree, TreeSearchPanel]
 	VBoxContainer *vbox_container = memnew(VBoxContainer);
 	add_child(vbox_container);
 	vbox_container->set_anchors_preset(PRESET_FULL_RECT);

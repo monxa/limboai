@@ -200,7 +200,7 @@ void TreeSearch::_highlight_tree(const String &p_search_mask) {
 
 // custom draw callback for highlighting (bind the parent_drw_method to this)
 void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Callable p_parent_draw_method) {
-	if (!p_tree_item){
+	if (!p_tree_item) {
 		return;
 	}
 	// call any parent draw methods such as for probability FIRST.
@@ -326,7 +326,7 @@ Vector<TreeItem *> TreeSearch::_find_matching_entries(TreeItem *p_tree_item, con
 		TreeItem *child = p_tree_item->get_child(i);
 		_find_matching_entries(child, p_search_mask, p_accum);
 	}
-	
+
 	// sort the result if we are at the root
 	if (p_tree_item == p_tree_item->get_tree()->get_root()) {
 		p_accum.sort();
@@ -448,7 +448,7 @@ inline bool TreeSearch::_vector_has_bsearch(Vector<T *> p_vec, T *element) {
 	return in_array && p_vec[idx] == element;
 }
 
-void TreeSearch::on_item_edited(TreeItem *item) {
+void TreeSearch::notify_item_edited(TreeItem *item) {
 	if (item->get_cell_mode(0) != TreeItem::CELL_MODE_CUSTOM) {
 		return;
 	}
@@ -486,7 +486,6 @@ void TreeSearch::update_search(Tree *p_tree) {
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
 	}
-	
 }
 
 TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
