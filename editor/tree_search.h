@@ -53,10 +53,12 @@ private:
 
 	// For TaskTree: These are updated when the tree is updated through TaskTree::_create_tree.
 	Tree *tree_reference;
+
 	Vector<TreeItem *> ordered_tree_items;
 	Vector<TreeItem *> matching_entries;
 	HashMap<TreeItem *, int> number_matches;
 	HashMap<TreeItem *, Callable> callable_cache;
+
 	bool was_searched_recently = false; // Performance
 	bool was_filtered_recently = false; // Performance
 
@@ -65,8 +67,8 @@ private:
 	// Update_search() calls these
 	void _filter_tree(const String &p_search_mask);
 	void _clear_filter();
-	void _highlight_tree();
 
+	void _highlight_tree();
 	void _highlight_tree_item(TreeItem *p_tree_item);
 
 	// Custom draw-Callback (bind inherited Callable).

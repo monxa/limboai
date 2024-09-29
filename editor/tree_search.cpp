@@ -93,10 +93,12 @@ void TreeSearch::_clear_filter() {
 }
 
 void TreeSearch::_highlight_tree() {
+	ERR_FAIL_COND(!tree_reference);
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *tree_item = ordered_tree_items[i];
 		_highlight_tree_item(tree_item);
 	}
+	tree_reference->queue_redraw();
 }
 
 void TreeSearch::_highlight_tree_item(TreeItem *p_tree_item) {
@@ -111,13 +113,13 @@ void TreeSearch::_highlight_tree_item(TreeItem *p_tree_item) {
 	if (p_tree_item->get_cell_mode(0) == TreeItem::CELL_MODE_CUSTOM) {
 		parent_draw_method = p_tree_item->get_custom_draw_callback(0);
 	}
+	
+	// if the cached draw method is already applied, do nothing.
+	if (callable_cache.has(p_tree_item) && parent_draw_method == callable_cache.get(p_tree_item)){
+		return;
+	}
 
 	Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(parent_draw_method);
-
-	// make sure we don't create deep callable chains.
-	if (callable_cache.has(p_tree_item) && parent_draw_method == callable_cache.get(p_tree_item)) {
-		draw_callback = callable_cache.get(p_tree_item);
-	}
 
 	// -- this is necessary because of the modularity of this implementation
 	// cache render properties of entry
@@ -408,10 +410,10 @@ void TreeSearch::update_search(Tree *p_tree) {
 	if (!search_panel->is_visible() || search_panel->get_text().length() == 0) {
 		// clear and redraw if search was active recently.
 		if (was_searched_recently) {
-			p_tree->queue_redraw();
 			_clear_filter();
 			matching_entries.clear();
 			was_searched_recently = false;
+			p_tree->queue_redraw();
 		}
 		return;
 	}
@@ -429,8 +431,7 @@ void TreeSearch::update_search(Tree *p_tree) {
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
 		was_filtered_recently = true;
-	}
-	else if (was_filtered_recently) {
+	} else if (was_filtered_recently) {
 		_clear_filter();
 		was_filtered_recently = false;
 	}
