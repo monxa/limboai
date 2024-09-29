@@ -46,11 +46,10 @@ void TreeSearch::_clean_callable_cache() {
 	HashMap<TreeItem *, Callable> new_callable_cache;
 	new_callable_cache.reserve(callable_cache.size()); // Efficiency
 
-	for (HashMap<TreeItem *, Callable>::Iterator it_cache = callable_cache.begin(); it_cache != callable_cache.end(); ++it_cache) {
-		TreeItem *cur_item = it_cache->key;
-		if (_vector_has_bsearch(ordered_tree_items, cur_item)) {
-			// Additional check for `cur_item->get_custom_draw_callback(0) == it_cache->value` more correct, but also more expensive.
-			new_callable_cache[cur_item] = it_cache->value;
+	for (int i = 0; i < ordered_tree_items.size(); i++) {
+		TreeItem *cur_item = ordered_tree_items[i];
+		if (callable_cache.has(cur_item)) {
+			new_callable_cache[cur_item] = callable_cache[cur_item];
 		}
 	}
 	callable_cache = new_callable_cache;
@@ -94,8 +93,8 @@ void TreeSearch::_clear_filter() {
 
 void TreeSearch::_highlight_tree() {
 	ERR_FAIL_COND(!tree_reference);
-	for (int i = 0; i < ordered_tree_items.size(); i++) {
-		TreeItem *tree_item = ordered_tree_items[i];
+	for (int i = 0; i < matching_entries.size(); i++) {
+		TreeItem *tree_item = matching_entries[i];
 		_highlight_tree_item(tree_item);
 	}
 	tree_reference->queue_redraw();
@@ -113,7 +112,7 @@ void TreeSearch::_highlight_tree_item(TreeItem *p_tree_item) {
 	if (p_tree_item->get_cell_mode(0) == TreeItem::CELL_MODE_CUSTOM) {
 		parent_draw_method = p_tree_item->get_custom_draw_callback(0);
 	}
-	
+
 	// if the cached draw method is already applied, do nothing.
 	if (callable_cache.has(p_tree_item) && parent_draw_method == callable_cache.get(p_tree_item)){
 		return;
@@ -236,11 +235,6 @@ void TreeSearch::_update_ordered_tree_items(TreeItem *p_tree_item) {
 	while (child) {
 		_update_ordered_tree_items(child);
 		child = child->get_next();
-	}
-
-	// If this is the root item, sort the list
-	if (p_tree_item == p_tree_item->get_tree()->get_root()) {
-		ordered_tree_items.sort();
 	}
 }
 
