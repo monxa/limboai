@@ -57,9 +57,12 @@ private:
 	Vector<TreeItem *> matching_entries;
 	HashMap<TreeItem *, int> number_matches;
 	HashMap<TreeItem *, Callable> callable_cache;
+	bool was_searched_recently = false;
+	bool has_been_filtered_recently = false;
 
 	// Update_search() calls these
 	void _filter_tree(const String &p_search_mask);
+	void _clear_filter();
 	void _highlight_tree();
 
 	void _highlight_tree_item(TreeItem *p_tree_item);

@@ -63,6 +63,20 @@ void TreeSearch::_filter_tree(const String &p_search_mask) {
 	}
 }
 
+// makes all tree items visible.
+void TreeSearch::_clear_filter() {
+	ERR_FAIL_COND(!tree_reference);
+	Vector<TreeItem *> items = { tree_reference->get_root() };
+	for (int idx = 0; idx < items.size(); idx++) {
+		TreeItem *cur_item = items[idx];
+		cur_item->set_visible(true);
+
+		for (int i = 0; i < cur_item->get_child_count(); i++) {
+			items.push_back(cur_item->get_child(i));
+		}
+	}
+}
+
 void TreeSearch::_highlight_tree() {
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
 		TreeItem *tree_item = ordered_tree_items[i];
@@ -368,12 +382,19 @@ void TreeSearch::notify_item_edited(TreeItem *item) {
 void TreeSearch::update_search(Tree *p_tree) {
 	ERR_FAIL_COND(!search_panel || !p_tree);
 
-	// ignore if panel not visible or no search string is given.
+	tree_reference = p_tree;
+
 	if (!search_panel->is_visible() || search_panel->get_text().length() == 0) {
+		// clear and redraw if search was active recently.
+		if (was_searched_recently) {
+			p_tree->queue_redraw();
+			_clear_filter();
+			matching_entries.clear();
+			was_searched_recently = false;
+		}
 		return;
 	}
-
-	tree_reference = p_tree;
+	was_searched_recently = true;
 
 	String search_mask = search_panel->get_text();
 	TreeSearchMode search_mode = search_panel->get_search_mode();
@@ -382,12 +403,12 @@ void TreeSearch::update_search(Tree *p_tree) {
 	_update_matching_entries(search_mask);
 	_update_number_matches();
 
-	_highlight_tree(search_mask);
-
+	_clear_filter();
+	_highlight_tree();
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
+		has_been_filtered_recently = true;
 	}
-	
 }
 
 TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
