@@ -41,6 +41,21 @@
 
 /* ------- TreeSearch ------- */
 
+void TreeSearch::_clean_callable_cache() {
+	ERR_FAIL_COND(!tree_reference);
+	HashMap<TreeItem *, Callable> new_callable_cache;
+	new_callable_cache.reserve(callable_cache.size()); // Efficiency
+
+	for (HashMap<TreeItem *, Callable>::Iterator it_cache = callable_cache.begin(); it_cache != callable_cache.end(); ++it_cache) {
+		TreeItem *cur_item = it_cache->key;
+		if (_vector_has_bsearch(ordered_tree_items, cur_item)) {
+			// Additional check for `cur_item->get_custom_draw_callback(0) == it_cache->value` more correct, but also more expensive.
+			new_callable_cache[cur_item] = it_cache->value;
+		}
+	}
+	callable_cache = new_callable_cache;
+}
+
 void TreeSearch::_filter_tree(const String &p_search_mask) {
 	if (matching_entries.size() == 0) {
 		return;
@@ -86,7 +101,8 @@ void TreeSearch::_highlight_tree() {
 
 void TreeSearch::_highlight_tree_item(TreeItem *p_tree_item) {
 	int num_m = number_matches.has(p_tree_item) ? number_matches.get(p_tree_item) : 0;
-	if (num_m == 0 && !callable_cache.has(p_tree_item)) {
+
+	if (num_m == 0) {
 		return;
 	}
 
@@ -164,7 +180,7 @@ void TreeSearch::_draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Calla
 
 		Vector2 rect_offset = Vector2(substring_before_size.x, 0);
 		rect_offset.x += p_tree_item->get_icon_max_width(0);
-		rect_offset.x += (h_sep + 4. * EDSCALE); // TODO: Find better way to determine texts x-offset
+		rect_offset.x += (h_sep + 4. * EDSCALE);
 		rect_offset.y = (p_rect.size.y - substring_match_size.y) / 2; // center box vertically
 
 		draw_rect.position += rect_offset - PADDING / 2;
@@ -218,6 +234,11 @@ void TreeSearch::_update_ordered_tree_items(TreeItem *p_tree_item) {
 	while (child) {
 		_update_ordered_tree_items(child);
 		child = child->get_next();
+	}
+
+	// If this is the root item, sort the list
+	if (p_tree_item == p_tree_item->get_tree()->get_root()) {
+		ordered_tree_items.sort();
 	}
 }
 
@@ -407,8 +428,13 @@ void TreeSearch::update_search(Tree *p_tree) {
 	_highlight_tree();
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
-		has_been_filtered_recently = true;
+		was_filtered_recently = true;
 	}
+	else if (was_filtered_recently) {
+		_clear_filter();
+		was_filtered_recently = false;
+	}
+	_clean_callable_cache();
 }
 
 TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
