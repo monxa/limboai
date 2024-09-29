@@ -538,8 +538,8 @@ void TaskTree::_notification(int p_what) {
 			tree->connect("multi_selected", callable_mp(this, &TaskTree::_on_item_selected).unbind(3), CONNECT_DEFERRED);
 			tree->connect("item_activated", callable_mp(this, &TaskTree::_on_item_activated));
 			tree->connect("item_collapsed", callable_mp(this, &TaskTree::_on_item_collapsed));
-			tree_search_panel->connect("update_requested", callable_mp(this, &TaskTree::_update_tree));
-			tree_search_panel->connect("visibility_changed", callable_mp(this, &TaskTree::_update_tree));
+			tree_search_panel->connect("update_requested", callable_mp(tree_search.ptr(), &TreeSearch::update_search).bind(tree));
+			tree_search_panel->connect("visibility_changed", callable_mp(tree_search.ptr(), &TreeSearch::update_search).bind(tree));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			_do_update_theme_item_cache();

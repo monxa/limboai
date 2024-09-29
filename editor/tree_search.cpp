@@ -63,40 +63,47 @@ void TreeSearch::_filter_tree(const String &p_search_mask) {
 	}
 }
 
-void TreeSearch::_highlight_tree(const String &p_search_mask) {
-	callable_cache.clear();
+void TreeSearch::_highlight_tree() {
 	for (int i = 0; i < ordered_tree_items.size(); i++) {
-		TreeItem *entry = ordered_tree_items[i];
-
-		int num_m = number_matches.has(entry) ? number_matches.get(entry) : 0;
-		if (num_m == 0) {
-			continue;
-		}
-
-		// make sure to also call any draw method already defined.
-		Callable parent_draw_method;
-		if (entry->get_cell_mode(0) == TreeItem::CELL_MODE_CUSTOM) {
-			parent_draw_method = entry->get_custom_draw_callback(0);
-		}
-
-		Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(parent_draw_method);
-
-		// -- this is necessary because of the modularity of this implementation
-		// cache render properties of entry
-		String cached_text = entry->get_text(0);
-		Ref<Texture2D> cached_icon = entry->get_icon(0);
-		int cached_max_width = entry->get_icon_max_width(0);
-		callable_cache[entry] = draw_callback;
-
-		// this removes render properties in entry
-		entry->set_custom_draw_callback(0, draw_callback);
-		entry->set_cell_mode(0, TreeItem::CELL_MODE_CUSTOM);
-
-		// restore render properties
-		entry->set_text(0, cached_text);
-		entry->set_icon(0, cached_icon);
-		entry->set_icon_max_width(0, cached_max_width);
+		TreeItem *tree_item = ordered_tree_items[i];
+		_highlight_tree_item(tree_item);
 	}
+}
+
+void TreeSearch::_highlight_tree_item(TreeItem *p_tree_item) {
+	int num_m = number_matches.has(p_tree_item) ? number_matches.get(p_tree_item) : 0;
+	if (num_m == 0 && !callable_cache.has(p_tree_item)) {
+		return;
+	}
+
+	// make sure to also call any draw method already defined.
+	Callable parent_draw_method;
+	if (p_tree_item->get_cell_mode(0) == TreeItem::CELL_MODE_CUSTOM) {
+		parent_draw_method = p_tree_item->get_custom_draw_callback(0);
+	}
+
+	Callable draw_callback = callable_mp(this, &TreeSearch::_draw_highlight_item).bind(parent_draw_method);
+
+	// make sure we don't create deep callable chains.
+	if (callable_cache.has(p_tree_item) && parent_draw_method == callable_cache.get(p_tree_item)) {
+		draw_callback = callable_cache.get(p_tree_item);
+	}
+
+	// -- this is necessary because of the modularity of this implementation
+	// cache render properties of entry
+	String cached_text = p_tree_item->get_text(0);
+	Ref<Texture2D> cached_icon = p_tree_item->get_icon(0);
+	int cached_max_width = p_tree_item->get_icon_max_width(0);
+	callable_cache[p_tree_item] = draw_callback;
+
+	// this removes render properties in entry
+	p_tree_item->set_custom_draw_callback(0, draw_callback);
+	p_tree_item->set_cell_mode(0, TreeItem::CELL_MODE_CUSTOM);
+
+	// restore render properties
+	p_tree_item->set_text(0, cached_text);
+	p_tree_item->set_icon(0, cached_icon);
+	p_tree_item->set_icon_max_width(0, cached_max_width);
 }
 
 // custom draw callback for highlighting (bind the parent_drw_method to this)
@@ -354,12 +361,7 @@ void TreeSearch::notify_item_edited(TreeItem *item) {
 	if (item->get_cell_mode(0) != TreeItem::CELL_MODE_CUSTOM) {
 		return;
 	}
-
-	if (!callable_cache.has(item) || item->get_custom_draw_callback(0) == callable_cache.get(item)) {
-		return;
-	}
-
-	item->set_custom_draw_callback(0, callable_cache.get(item));
+	_highlight_tree_item(item);
 }
 
 // Call this as a post-processing step for the already constructed tree.
@@ -385,6 +387,7 @@ void TreeSearch::update_search(Tree *p_tree) {
 	if (search_mode == TreeSearchMode::FILTER) {
 		_filter_tree(search_mask);
 	}
+	
 }
 
 TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {

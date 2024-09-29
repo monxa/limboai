@@ -60,7 +60,9 @@ private:
 
 	// Update_search() calls these
 	void _filter_tree(const String &p_search_mask);
-	void _highlight_tree(const String &p_search_mask);
+	void _highlight_tree();
+
+	void _highlight_tree_item(TreeItem *p_tree_item);
 
 	// Custom draw-Callback (bind inherited Callable).
 	void _draw_highlight_item(TreeItem *p_tree_item, Rect2 p_rect, Callable p_parent_draw_method);
