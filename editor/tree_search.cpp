@@ -205,8 +205,8 @@ void TreeSearch::_update_number_matches() {
 	for (int i = 0; i < matching_entries.size(); i++) {
 		TreeItem *item = matching_entries[i];
 		while (item) {
-			int old_num_value = number_matches.has(item) ? number_matches.get(item) : 0;
-			number_matches[item] = old_num_value + 1;
+			int previous_match_cnt = number_matches.has(item) ? number_matches.get(item) : 0;
+			number_matches[item] = previous_match_cnt + 1;
 			item = item->get_parent();
 		}
 	}
@@ -253,8 +253,10 @@ TreeSearch::StringSearchIndices TreeSearch::_substring_bounds(const String &p_se
 	// Determine if the search should be case-insensitive.
 	bool is_case_insensitive = (p_search_mask == p_search_mask.to_lower());
 	String searchable_processed = is_case_insensitive ? p_searchable.to_lower() : p_searchable;
+
 	PackedStringArray words = p_search_mask.split(" ");
 	int word_position = 0;
+
 	for (const String &word : words) {
 		if (word.is_empty()) {
 			continue; // Skip empty words.

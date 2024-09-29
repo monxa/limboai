@@ -92,7 +92,7 @@ public:
 	void update_search(Tree *p_tree);
 	void notify_item_edited(TreeItem *p_item);
 
-	TreeSearch() { ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly"); }
+	TreeSearch() { ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly."); }
 	TreeSearch(TreeSearchPanel *p_search_panel);
 };
 
