@@ -39,98 +39,6 @@
 
 #define UPPER_BOUND (1 << 15) // for substring search.
 
-/* ------- TreeSearchPanel ------- */
-
-void TreeSearchPanel::_initialize_controls() {
-	line_edit_search = memnew(LineEdit);
-	check_button_filter_highlight = memnew(CheckBox);
-	close_button = memnew(Button);
-	label_filter = memnew(Label);
-
-	line_edit_search->set_placeholder(TTR("Search tree"));
-
-	close_button->set_theme_type_variation(LW_NAME(FlatButton));
-
-	// positioning and sizing
-	set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
-	set_v_size_flags(SIZE_SHRINK_CENTER); // Do not expand vertically
-
-	line_edit_search->set_h_size_flags(SIZE_EXPAND_FILL);
-
-	_add_spacer(0.25); // otherwise the lineedits expand margin touches the left border.
-	add_child(line_edit_search);
-	_add_spacer(0.25);
-
-	add_child(check_button_filter_highlight);
-	add_child(label_filter);
-
-	_add_spacer(0.25);
-	add_child(close_button);
-	_add_spacer(0.25);
-}
-
-void TreeSearchPanel::_add_spacer(float p_width_multiplier) {
-	Control *spacer = memnew(Control);
-	spacer->set_custom_minimum_size(Vector2(8.0 * EDSCALE * p_width_multiplier, 0.0));
-	add_child(spacer);
-}
-
-void TreeSearchPanel::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_READY: {
-
-			// close callbacks
-			close_button->connect("pressed", Callable(this, "set_visible").bind(false));
-			close_button->set_shortcut(LW_GET_SHORTCUT("limbo_ai/hide_tree_search"));
-
-			// search callbacks
-			Callable c_update_requested = Callable(this, "emit_signal").bind("update_requested");
-			Callable c_text_submitted = Callable((Object *)this, "emit_signal").bind("text_submitted");
-
-			line_edit_search->connect("text_changed", c_update_requested.unbind(1));
-			check_button_filter_highlight->connect("pressed", c_update_requested);
-			line_edit_search->connect("text_submitted", c_text_submitted.unbind(1));
-			break;
-		}
-		case NOTIFICATION_THEME_CHANGED: {
-			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
-			label_filter->set_text(TTR("Filter"));
-			break;
-		}
-	}
-}
-
-void TreeSearchPanel::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("update_requested"));
-	ADD_SIGNAL(MethodInfo("text_submitted"));
-}
-
-TreeSearchPanel::TreeSearchPanel() {
-	_initialize_controls();
-	set_visible(false);
-}
-
-TreeSearch::TreeSearchMode TreeSearchPanel::get_search_mode() {
-	if (!check_button_filter_highlight || !check_button_filter_highlight->is_pressed()) {
-		return TreeSearch::TreeSearchMode::HIGHLIGHT;
-	}
-	return TreeSearch::TreeSearchMode::FILTER;
-}
-
-String TreeSearchPanel::get_text() {
-	if (!line_edit_search) {
-		return String();
-	}
-	return line_edit_search->get_text();
-}
-
-void TreeSearchPanel::show_and_focus() {
-	set_visible(true);
-	line_edit_search->grab_focus();
-}
-
-/* !TreeSearchPanel */
-
 /* ------- TreeSearch ------- */
 
 void TreeSearch::_filter_tree(const String &p_search_mask) {
@@ -483,5 +391,96 @@ TreeSearch::TreeSearch(TreeSearchPanel *p_search_panel) {
 }
 
 /* !TreeSearch */
+
+/* ------- TreeSearchPanel ------- */
+
+void TreeSearchPanel::_initialize_controls() {
+	line_edit_search = memnew(LineEdit);
+	check_button_filter_highlight = memnew(CheckBox);
+	close_button = memnew(Button);
+	label_filter = memnew(Label);
+
+	line_edit_search->set_placeholder(TTR("Search tree"));
+
+	close_button->set_theme_type_variation(LW_NAME(FlatButton));
+
+	// positioning and sizing
+	set_anchors_and_offsets_preset(LayoutPreset::PRESET_BOTTOM_WIDE);
+	set_v_size_flags(SIZE_SHRINK_CENTER); // Do not expand vertically
+
+	line_edit_search->set_h_size_flags(SIZE_EXPAND_FILL);
+
+	_add_spacer(0.25); // otherwise the lineedits expand margin touches the left border.
+	add_child(line_edit_search);
+	_add_spacer(0.25);
+
+	add_child(check_button_filter_highlight);
+	add_child(label_filter);
+
+	_add_spacer(0.25);
+	add_child(close_button);
+	_add_spacer(0.25);
+}
+
+void TreeSearchPanel::_add_spacer(float p_width_multiplier) {
+	Control *spacer = memnew(Control);
+	spacer->set_custom_minimum_size(Vector2(8.0 * EDSCALE * p_width_multiplier, 0.0));
+	add_child(spacer);
+}
+
+void TreeSearchPanel::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_READY: {
+			// close callbacks
+			close_button->connect("pressed", Callable(this, "set_visible").bind(false));
+			close_button->set_shortcut(LW_GET_SHORTCUT("limbo_ai/hide_tree_search"));
+
+			// search callbacks
+			Callable c_update_requested = Callable(this, "emit_signal").bind("update_requested");
+			Callable c_text_submitted = Callable((Object *)this, "emit_signal").bind("text_submitted");
+
+			line_edit_search->connect("text_changed", c_update_requested.unbind(1));
+			check_button_filter_highlight->connect("pressed", c_update_requested);
+			line_edit_search->connect("text_submitted", c_text_submitted.unbind(1));
+			break;
+		}
+		case NOTIFICATION_THEME_CHANGED: {
+			BUTTON_SET_ICON(close_button, get_theme_icon(LW_NAME(Close), LW_NAME(EditorIcons)));
+			label_filter->set_text(TTR("Filter"));
+			break;
+		}
+	}
+}
+
+void TreeSearchPanel::_bind_methods() {
+	ADD_SIGNAL(MethodInfo("update_requested"));
+	ADD_SIGNAL(MethodInfo("text_submitted"));
+}
+
+TreeSearchPanel::TreeSearchPanel() {
+	_initialize_controls();
+	set_visible(false);
+}
+
+TreeSearch::TreeSearchMode TreeSearchPanel::get_search_mode() {
+	if (!check_button_filter_highlight || !check_button_filter_highlight->is_pressed()) {
+		return TreeSearch::TreeSearchMode::HIGHLIGHT;
+	}
+	return TreeSearch::TreeSearchMode::FILTER;
+}
+
+String TreeSearchPanel::get_text() {
+	if (!line_edit_search) {
+		return String();
+	}
+	return line_edit_search->get_text();
+}
+
+void TreeSearchPanel::show_and_focus() {
+	set_visible(true);
+	line_edit_search->grab_focus();
+}
+
+/* !TreeSearchPanel */
 
 #endif // TOOLS_ENABLED

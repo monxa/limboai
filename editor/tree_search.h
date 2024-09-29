@@ -14,15 +14,6 @@
 #ifndef TREE_SEARCH_H
 #define TREE_SEARCH_H
 
-#ifdef LIMBOAI_GDEXTENSION
-#include <godot_cpp/classes/check_box.hpp>
-#include <godot_cpp/classes/h_flow_container.hpp>
-#include <godot_cpp/classes/label.hpp>
-#include <godot_cpp/classes/line_edit.hpp>
-#include <godot_cpp/classes/tree.hpp>
-#include <godot_cpp/templates/hash_map.hpp>
-#endif // LIMBOAI_GDEXTENSION
-
 #ifdef LIMBOAI_MODULE
 #include "core/templates/hash_map.h"
 #include "scene/gui/check_box.h"
@@ -31,6 +22,15 @@
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
 #endif // LIMBOAI_MODULE
+
+#ifdef LIMBOAI_GDEXTENSION
+#include <godot_cpp/classes/check_box.hpp>
+#include <godot_cpp/classes/h_flow_container.hpp>
+#include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/line_edit.hpp>
+#include <godot_cpp/classes/tree.hpp>
+#include <godot_cpp/templates/hash_map.hpp>
+#endif // LIMBOAI_GDEXTENSION
 
 using namespace godot;
 
@@ -95,6 +95,8 @@ public:
 	TreeSearch() { ERR_FAIL_MSG("TreeSearch needs a TreeSearchPanel to work properly"); }
 	TreeSearch(TreeSearchPanel *p_search_panel);
 };
+
+// --------------------------------------------
 
 class TreeSearchPanel : public HFlowContainer {
 	GDCLASS(TreeSearchPanel, HFlowContainer)
